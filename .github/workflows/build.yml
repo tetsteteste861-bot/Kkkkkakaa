@@ -1,1 +1,20 @@
+name: build
 
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install stable --profile minimal && rustup default stable
+      - run: rustup target add wasm32-wasip1 wasm32-unknown-unknown || true
+      - run: cargo install --git https://github.com/horizon-rust/horizon cargo-horizon-mod --locked
+      - run: cargo horizon-mod update
+      - run: cargo horizon-mod build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mera-mera-logic-hmod
+          path: target/horizon-mod/*.hmod

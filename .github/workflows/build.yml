@@ -5,16 +5,25 @@ on:
   push:
 
 jobs:
-  build:
+  dump:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: rustup toolchain install stable --profile minimal && rustup default stable
-      - run: rustup target add wasm32-wasip1 wasm32-unknown-unknown || true
-      - run: cargo install --git https://github.com/horizon-rust/horizon cargo-horizon-mod --locked
-      - run: cargo horizon-mod update
-      - run: cargo horizon-mod build
+      - name: Coletar exemplo e API
+        run: |
+          mkdir out
+          git clone --depth 1 https://github.com/arismoko/horizon-machine-sample sample || true
+          git clone --depth 1 https://github.com/horizon-rust/horizon h || true
+          {
+            echo "=== sample/src/tour/client.rs"; cat sample/src/tour/client.rs
+            echo "=== sample/src/lib.rs"; cat sample/src/lib.rs
+            echo "=== sample/Cargo.toml"; cat sample/Cargo.toml
+            echo "=== sample/horizon-mod.toml"; cat sample/horizon-mod.toml
+            echo "=== API"
+            grep -rn -B2 -A14 "input_key\|register_key_mapping\|NativeKeyRegistration\|fn mod_key" h/crates --include=*.rs | head -c 300000
+          } > out/dump.txt 2>&1 || true
+          wc -c out/dump.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: mera-mera-logic-hmod
-          path: target/horizon-mod/*.hmod
+          name: dump
+          path: out/dump.txt
+          

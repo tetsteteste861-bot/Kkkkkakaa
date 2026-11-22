@@ -1,0 +1,9 @@
+id = "mera_mera_logic"
+name = "Mera Mera no Mi - Logica"
+version = "0.1.1"
+description = "Menu, hotbar de combate, estamina e cooldowns da Mera Mera no Mi (Hiken, Higan, Hibashira)."
+authors = ["voce"]
+license = "MIT"
+api = "0.2"
+side = "client"
+capabilities = ["registries"]
